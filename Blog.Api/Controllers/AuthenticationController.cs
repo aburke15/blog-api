@@ -1,71 +1,95 @@
-
 using System;
 using System.Threading.Tasks;
 using Blog.Api.Controllers.Requests;
-using Blog.Data;
 using Blog.Data.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 
 namespace Blog.Api.Controllers
 {
-    [Route("auth")]
+    [Route("auth"), AllowAnonymous]
     public class AuthenticationController : BaseApiController
     {
-        private readonly BlogContext _context;
+        private readonly ILogger<AuthenticationController> _logger;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-        public AuthenticationController(BlogContext context)
-            => _context = context;
-        // register
-        [HttpGet("register/{id:int}")]
-        public async Task<IActionResult> GetRegisteredUser(int id)
+        public AuthenticationController(
+            ILogger<AuthenticationController> logger,
+            SignInManager<User> signInManager,
+            UserManager<User> userManager)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-                return NotFound(new { Message = "User does not exist." });
-
-            return Ok(user);
+            _logger = logger;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(CreateUserRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterNewUserRequest request)
         {
+            const string failureMessage = "User registration failed.";
+
             var user = new User
             {
-                CreatedAt = DateTime.Now,
-                Username = request.Username,
-                Password = request.Password,
+                UserName = request.Username,
                 Email = request.Email
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var result = await _userManager
+                .CreateAsync(user, request.Password);
 
-            return CreatedAtAction(
-                nameof(GetRegisteredUser), new
+            if (result.Succeeded == false)
+            {
+                var dictionary = new ModelStateDictionary();
+
+                foreach (IdentityError error in result.Errors)
+                    dictionary.AddModelError(error.Code, error.Description);
+
+                return new BadRequestObjectResult(new
                 {
-                    id = user.Id
-                }, user);
+                    Message = failureMessage,
+                    Errors = dictionary
+                });
+            }
+
+            return Ok(new { Message = "User registration successful." });
         }
 
-        [HttpDelete("register/{id:int}")]
-        public async Task<IActionResult> DeleteRegisteredUser(int id)
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
         {
-            var user = await _context.Users.FindAsync(id);
+            var result = await _signInManager
+                .PasswordSignInAsync(
+                    request.Username,
+                    request.Password,
+                    request.RememberMe,
+                    lockoutOnFailure: false
+                );
 
-            if (user == null)
-                return NotFound(new { Message = "User does not exist." });
+            if (result.Succeeded == false)
+            {
+                var dictionary = new ModelStateDictionary();
 
-            _context.Remove(user);
-            await _context.SaveChangesAsync();
+                dictionary.AddModelError("Error", "Invalid username or password.");
 
-            return Ok(new { Message = $"User with username: {user.Username} deleted." });
+                return new BadRequestObjectResult(new
+                {
+                    Message = "Login attempt failed.",
+                    Errors = dictionary
+                });
+            }
+
+            return Ok(new { Message = "Login successful." });
         }
 
-        public (bool isGood, string name) DoesSomething()
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutAsync()
         {
-            return (true, "hello, world!");
+            await _signInManager.SignOutAsync();
+            return Ok(new { Message = "Logout successful." });
         }
-        // login
     }
 }

@@ -1,8 +1,8 @@
 using System;
 
-namespace Blog.Api
+namespace Blog.Api.Controllers.Dtos
 {
-    public class WeatherForecast
+    public class WeatherForecastDto
     {
         public DateTime Date { get; set; }
 
