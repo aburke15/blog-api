@@ -7,7 +7,6 @@ namespace Blog.Api.Controllers.Requests
     {
         [Required, MinLength(4), MaxLength(100)]
         public string Title { get; set; }
-        [Required]
         public string Body { get; set; }
 
         [Required]

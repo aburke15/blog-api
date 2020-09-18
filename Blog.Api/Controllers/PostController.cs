@@ -25,7 +25,6 @@ namespace Blog.Api.Controllers
             _logger = logger;
         }
 
-        // anyone can see all posts
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> GetPostsAsync()
         {
@@ -68,13 +67,20 @@ namespace Blog.Api.Controllers
         [HttpPut, Authorize]
         public async Task<IActionResult> UpdatePostAsync([FromBody] UpdatePostRequest request)
         {
-            var user = await _context.Users
-                .FindAsync(request.AuthorId);
+            var post = await _context.Posts
+                .FindAsync(request.Id);
 
-            if (user == null)
-                return new UnauthorizedObjectResult(new { Message = "" });
+            if (post == null || post.AuthorId != request.AuthorId)
+                return new UnauthorizedObjectResult(new { Message = "Not authorized to update this post." });
 
-            return Ok();
+            if (!string.IsNullOrEmpty(request.Title) && request.Title != post.Title)
+                post.Title = request.Title;
+            if (!string.IsNullOrEmpty(request.Body) && request.Body != post.Body)
+                post.Body = request.Body;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Post updated successfully." });
         }
     }
 }
