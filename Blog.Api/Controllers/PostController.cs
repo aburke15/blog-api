@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Blog.Api.Controllers.Dtos;
@@ -62,6 +63,12 @@ namespace Blog.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { Message = $"Post created successfully with id: [{post.Id}]" });
+        }
+
+        [HttpPut, Authorize]
+        public IActionResult UpdatePostAsync() // change back to async
+        {
+            throw new NotImplementedException();
         }
     }
 }
