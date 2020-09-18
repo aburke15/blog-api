@@ -66,9 +66,15 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPut, Authorize]
-        public IActionResult UpdatePostAsync() // change back to async
+        public async Task<IActionResult> UpdatePostAsync([FromBody] UpdatePostRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users
+                .FindAsync(request.AuthorId);
+
+            if (user == null)
+                return new UnauthorizedObjectResult(new { Message = "" });
+
+            return Ok();
         }
     }
 }
