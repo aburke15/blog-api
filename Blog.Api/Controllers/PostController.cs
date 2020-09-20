@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using Blog.Api.Controllers.Dtos;
 using Blog.Api.Controllers.Requests;
 using Blog.Data;
+using Blog.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,14 +18,25 @@ namespace Blog.Api.Controllers
     public partial class PostController : BaseApiController
     {
         private readonly BlogDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<PostController> _logger;
+        private readonly UserManager<User> _userManager;
+        private readonly string _username;
+        private readonly string _userId;
 
         public PostController(
             BlogDbContext context,
-            ILogger<PostController> logger)
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<PostController> logger,
+            UserManager<User> userManager)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _userManager = userManager;
+
+            _username = _httpContextAccessor.HttpContext.User?.Identity?.Name;
+            _userId = _context.Users.FirstOrDefault(u => u.UserName == _username)?.Id;
         }
 
         [HttpGet, AllowAnonymous]
@@ -33,35 +47,65 @@ namespace Blog.Api.Controllers
                 {
                     Id = p.Id,
                     CreatedAt = p.CreatedAt,
+                    CreatedAtDisplay = p.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
                     Title = p.Title,
+                    CanEdit = _userId == p.Author.Id,
                     Author = new UserSummaryDto
                     {
-                        Id = p.AuthorId,
                         Username = p.Author.UserName
                     }
-                }).ToListAsync();
-
-            if (posts == null)
-                return new BadRequestObjectResult(new { Message = "Something went wrong." });
+                })
+                .OrderBy(p => p.Id)
+                .ToListAsync();
 
             return Ok(posts);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPostByIdAsync(int id)
+        {
+            var post = await _context.Posts
+                .FindAsync(id);
+
+            if (post == null)
+                return new NotFoundResult();
+
+            var result = new PostDetailDto
+            {
+                Id = post.Id,
+                CreatedAt = post.CreatedAt,
+                CreatedAtDisplay = post.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
+                Title = post.Title,
+                Body = post.Body,
+                CanEdit = post.AuthorId == _userId,
+                Author = new UserSummaryDto
+                {
+                    Username = post.Author.UserName
+                }
+            };
+
+            return Ok(result);
         }
 
         [HttpPost, Authorize]
         public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostRequest request)
         {
-            // validation
+            var user = await _userManager
+                .FindByNameAsync(_username);
+
+            // abstract this so that the data layer is not referenced in the presentation layer
             var post = new Data.Models.Post
             {
                 Title = request.Title,
                 Body = request.Body,
-                AuthorId = request.AuthorId
+                AuthorId = user.Id,
+                Author = user
             };
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = $"Post created successfully with id: [{post.Id}]" });
+            return Ok(new { Message = $"Post created with Id: [{post.Id}]" });
         }
 
         [HttpPut, Authorize]
@@ -70,17 +114,38 @@ namespace Blog.Api.Controllers
             var post = await _context.Posts
                 .FindAsync(request.Id);
 
-            if (post == null || post.AuthorId != request.AuthorId)
-                return new UnauthorizedObjectResult(new { Message = "Not authorized to update this post." });
+            if (post == null)
+                return new NotFoundResult();
+            if (post.AuthorId != _userId)
+                return new UnauthorizedResult();
 
             if (!string.IsNullOrEmpty(request.Title) && request.Title != post.Title)
                 post.Title = request.Title;
             if (!string.IsNullOrEmpty(request.Body) && request.Body != post.Body)
                 post.Body = request.Body;
+            if (post.Author == null)
+                post.Author = await _userManager.FindByIdAsync(_userId);
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Post updated successfully." });
+            return Ok(new { Message = $"Post updated with Id: [{post.Id}]" });
+        }
+
+        [HttpDelete("{id}"), Authorize]
+        public async Task<IActionResult> DeletePostAsync(int id)
+        {
+            var post = await _context.Posts
+                .FindAsync(id);
+
+            if (post == null)
+                return new NotFoundResult();
+            if (post.AuthorId != _userId)
+                return new UnauthorizedResult();
+
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = $"Post deleted with Id: [{id}]" });
         }
     }
 }

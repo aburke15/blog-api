@@ -8,8 +8,5 @@ namespace Blog.Api.Controllers.Requests
         [Required, MinLength(4), MaxLength(100)]
         public string Title { get; set; }
         public string Body { get; set; }
-
-        [Required]
-        public string AuthorId { get; set; }
     }
 }

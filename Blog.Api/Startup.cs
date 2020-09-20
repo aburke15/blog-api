@@ -34,6 +34,8 @@ namespace Blog.Api
                 options.UseNpgsql(Configuration.GetConnectionString("Blog"))
             );
 
+            services.AddHttpContextAccessor();
+
             services
                 .AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<BlogDbContext>();
