@@ -17,9 +17,66 @@
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "Blog.Development.Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Blog.Api/bin/Debug/netcoreapp3.1/Blog.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Blog.Api",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Blog.Development.Release",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Blog.Api/bin/Release/netcoreapp3.1/Blog.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Blog.Api",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Blog.Production.Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Blog.Api/bin/Debug/netcoreapp3.1/Blog.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Blog.Api",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Production"
+            }
+        },
+        {
+            "name": "Blog.Production.Release",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Blog.Api/bin/Release/netcoreapp3.1/Blog.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Blog.Api",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Production"
             }
         },
         {

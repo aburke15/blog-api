@@ -20,19 +20,21 @@ namespace Blog.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BlogDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("Blog"))
-            );
+                    options.UseNpgsql(Configuration.GetConnectionString("Blog"))
+                );
 
             services.AddHttpContextAccessor();
 
@@ -71,7 +73,9 @@ namespace Blog.Api
                     return Task.CompletedTask;
                 };
 
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = Env.IsDevelopment()
+                    ? TimeSpan.FromMinutes(3) : TimeSpan.FromDays(90);
+
                 options.SlidingExpiration = true;
             });
 
