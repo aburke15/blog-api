@@ -24,5 +24,12 @@
   <ItemGroup>
     <Folder Include="Infrastructure\" />
     <Folder Include="Infrastructure\Configuration\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\Posts\" />
+    <Folder Include="Services\Posts\Interfaces\" />
+    <Folder Include="Services\Posts\Implementations\" />
+    <Folder Include="Data\Repositories\" />
+    <Folder Include="Data\Repositories\Interfaces\" />
+    <Folder Include="Data\Repositories\Implementations\" />
   </ItemGroup>
 </Project>

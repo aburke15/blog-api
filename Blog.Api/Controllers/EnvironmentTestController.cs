@@ -14,14 +14,13 @@ namespace Blog.Api.Controllers
         private readonly IConfiguration _configuration;
 
         public EnvironmentTestController(IConfiguration configuration)
-            => _configuration = configuration; // change this to singleton options object
+            => _configuration = configuration; // change this to injectable settings object
 
         [HttpGet]
         public IActionResult GetEnvironmentSettings()
             => Ok(new
             {
-                Message = $"MySetting: {_configuration.GetValue<string>("MySetting")}",
-                Db = $"Database: {_configuration.GetConnectionString("Blog")}"
+                Message = $"Environment: {_configuration.GetValue<string>("MySetting")}"
             });
     }
 }

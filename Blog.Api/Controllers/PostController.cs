@@ -94,7 +94,7 @@ namespace Blog.Api.Controllers
                 .FindByNameAsync(_username);
 
             // abstract this so that the data layer is not referenced in the presentation layer
-            var post = new Data.Models.Post
+            var post = new Post
             {
                 Title = request.Title,
                 Body = request.Body,

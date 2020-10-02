@@ -8,7 +8,6 @@ namespace Blog.Data.Models
         public Post()
             => CreatedAt = DateTime.Now;
 
-        [Key]
         public int Id { get; }
         public DateTime CreatedAt { get; }
         public string Title { get; set; }
