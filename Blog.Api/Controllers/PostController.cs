@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Blog.Api.Controllers.Dtos;
 using Blog.Api.Controllers.Requests;
 using Blog.Data;
 using Blog.Data.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -23,24 +25,27 @@ namespace Blog.Api.Controllers
         private readonly UserManager<User> _userManager;
         private readonly string _username;
         private readonly string _userId;
+        private readonly IMediator _mediator;
 
         public PostController(
             BlogDbContext context,
             IHttpContextAccessor httpContextAccessor,
             ILogger<PostController> logger,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            IMediator mediator)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _userManager = userManager;
+            _mediator = mediator;
 
             _username = _httpContextAccessor.HttpContext.User?.Identity?.Name;
             _userId = _context.Users.FirstOrDefault(u => u.UserName == _username)?.Id;
         }
 
         [HttpGet, AllowAnonymous]
-        public async Task<IActionResult> GetPostsAsync()
+        public async Task<IActionResult> GetPostsAsync(CancellationToken cancellationToken)
         {
             var posts = await _context.Posts.Select(p =>
                 new PostSummaryDto
@@ -56,16 +61,16 @@ namespace Blog.Api.Controllers
                     }
                 })
                 .OrderBy(p => p.Id)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return Ok(posts);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPostByIdAsync(int id)
+        public async Task<IActionResult> GetPostByIdAsync(int id, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
-                .FindAsync(id);
+                .FindAsync(id, cancellationToken);
 
             if (post == null)
                 return new NotFoundResult();
@@ -88,7 +93,9 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost, Authorize]
-        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostRequest request)
+        public async Task<IActionResult> CreatePostAsync(
+            [FromBody] CreatePostRequest request,
+            CancellationToken cancellationToken)
         {
             var user = await _userManager
                 .FindByNameAsync(_username);

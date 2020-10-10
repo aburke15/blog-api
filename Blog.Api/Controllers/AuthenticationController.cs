@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Blog.Api.Controllers.Requests;
 using Blog.Data.Models;
@@ -28,7 +29,9 @@ namespace Blog.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterNewUserRequest request)
+        public async Task<IActionResult> RegisterAsync(
+            [FromBody] RegisterNewUserRequest request,
+            CancellationToken cancellationToken)
         {
             const string failureMessage = "User registration failed.";
 
