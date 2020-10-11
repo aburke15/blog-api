@@ -10,9 +10,9 @@ namespace Blog.Data.Repositories.Implementations
 {
     public class SqlRepository<T> : IRepository<T> where T : class
     {
-        protected readonly BlogDbContext _context;
+        protected readonly DbContext _context;
 
-        public SqlRepository(BlogDbContext context)
+        public SqlRepository(DbContext context)
             => _context = context;
 
         public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)

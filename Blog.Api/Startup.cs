@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Blog.Data;
 using Blog.Data.Models;
+using Blog.Data.Repositories.Implementations;
+using Blog.Data.Repositories.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -82,6 +84,11 @@ namespace Blog.Api
             });
 
             services.AddControllers();
+
+            services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+            services.AddScoped(typeof(IRepository<>), typeof(SqlRepository<>));
+            services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddMediatR(typeof(Startup));
         }

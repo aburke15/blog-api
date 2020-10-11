@@ -1,4 +1,5 @@
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blog.Data.Repositories.Interfaces
@@ -7,6 +8,6 @@ namespace Blog.Data.Repositories.Interfaces
     {
         IUserRepository Users { get; }
         IPostRepository Posts { get; }
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

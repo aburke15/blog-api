@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Blog.Data.Models;
 using Blog.Data.Repositories.Interfaces;
@@ -11,7 +12,12 @@ namespace Blog.Data.Repositories.Implementations
             : base(context)
         { }
 
-        public async Task<IdentityUser> GetOneAsync(string id)
-            => await _context.Users.FindAsync(id);
+        public async Task<IdentityUser> GetOneAsync(string id, CancellationToken cancellationToken = default)
+            => await BlogDbContext.Users.FindAsync(id, cancellationToken);
+
+        public BlogDbContext BlogDbContext
+        {
+            get { return _context as BlogDbContext; }
+        }
     }
 }
