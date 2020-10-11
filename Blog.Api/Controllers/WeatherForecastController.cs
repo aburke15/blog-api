@@ -25,10 +25,10 @@ namespace Blog.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecastDto> Get()
+        public IEnumerable<WeatherForecastResponse> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecastDto
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecastResponse
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),

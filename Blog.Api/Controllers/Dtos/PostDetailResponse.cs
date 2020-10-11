@@ -2,7 +2,7 @@ using System;
 
 namespace Blog.Api.Controllers.Dtos
 {
-    public class PostDetailDto : PostSummaryDto
+    public class PostDetailResponse : PostSummaryResponse
     {
         public string Body { get; set; }
     }

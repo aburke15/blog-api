@@ -47,15 +47,19 @@ namespace Blog.Api.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> GetPostsAsync(CancellationToken cancellationToken)
         {
+            var query = new object();
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(result);
+
             var posts = await _context.Posts.Select(p =>
-                new PostSummaryDto
+                new PostSummaryResponse
                 {
                     Id = p.Id,
                     CreatedAt = p.CreatedAt,
                     CreatedAtDisplay = p.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
                     Title = p.Title,
                     CanEdit = _userId == p.Author.Id,
-                    Author = new UserSummaryDto
+                    Author = new UserSummaryResponse
                     {
                         Username = p.Author.UserName
                     }
@@ -75,7 +79,7 @@ namespace Blog.Api.Controllers
             if (post == null)
                 return new NotFoundResult();
 
-            var result = new PostDetailDto
+            var result = new PostDetailResponse
             {
                 Id = post.Id,
                 CreatedAt = post.CreatedAt,
@@ -83,7 +87,7 @@ namespace Blog.Api.Controllers
                 Title = post.Title,
                 Body = post.Body,
                 CanEdit = post.AuthorId == _userId,
-                Author = new UserSummaryDto
+                Author = new UserSummaryResponse
                 {
                     Username = post.Author.UserName
                 }

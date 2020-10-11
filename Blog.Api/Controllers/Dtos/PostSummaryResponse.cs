@@ -2,7 +2,7 @@ using System;
 
 namespace Blog.Api.Controllers.Dtos
 {
-    public class PostSummaryDto
+    public class PostSummaryResponse
     {
         public int? Id { get; set; }
         public DateTime? CreatedAt { get; set; }
@@ -10,6 +10,6 @@ namespace Blog.Api.Controllers.Dtos
         public string Title { get; set; }
         public bool CanEdit { get; set; }
 
-        public UserSummaryDto Author { get; set; }
+        public UserSummaryResponse Author { get; set; }
     }
 }
