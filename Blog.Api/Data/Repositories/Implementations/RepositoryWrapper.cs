@@ -7,7 +7,7 @@ namespace Blog.Data.Repositories.Implementations
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
-        private readonly BlogDbContext _context;
+        protected readonly BlogDbContext _context;
 
         public RepositoryWrapper(BlogDbContext context)
         {

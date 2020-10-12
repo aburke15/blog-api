@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blog.Api.Controllers.Dtos;
 using Blog.Api.Controllers.Requests;
+using Blog.Api.Infrastructure.Queries;
 using Blog.Data;
 using Blog.Data.Models;
 using MediatR;
@@ -47,27 +48,27 @@ namespace Blog.Api.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> GetPostsAsync(CancellationToken cancellationToken)
         {
-            var query = new object();
+            var query = new GetAllPostSummariesQuery();
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
 
-            var posts = await _context.Posts.Select(p =>
-                new PostSummaryResponse
-                {
-                    Id = p.Id,
-                    CreatedAt = p.CreatedAt,
-                    CreatedAtDisplay = p.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
-                    Title = p.Title,
-                    CanEdit = _userId == p.Author.Id,
-                    Author = new UserSummaryResponse
-                    {
-                        Username = p.Author.UserName
-                    }
-                })
-                .OrderBy(p => p.Id)
-                .ToListAsync(cancellationToken);
+            // var posts = await _context.Posts.Select(p =>
+            // new PostSummaryResponse
+            //     {
+            //         Id = p.Id,
+            //         CreatedAt = p.CreatedAt,
+            //         CreatedAtDisplay = p.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
+            //         Title = p.Title,
+            //         CanEdit = _userId == p.Author.Id,
+            //         Author = new UserSummaryResponse
+            //         {
+            //             Username = p.Author.UserName
+            //         }
+            //     })
+            //     .OrderBy(p => p.Id)
+            //     .ToListAsync(cancellationToken);
 
-            return Ok(posts);
+            // return Ok(posts);
         }
 
         [HttpGet("{id}")]

@@ -22,7 +22,7 @@ namespace Blog.Data.Repositories.Implementations
         public void Delete(T entity)
             => _context.Set<T>().Remove(entity);
 
-        public async Task<IEnumerable<T>> GetAllAsync(
+        public virtual async Task<IEnumerable<T>> GetAllAsync(
             CancellationToken cancellationToken)
             => await _context.Set<T>()
                 .AsNoTracking<T>()

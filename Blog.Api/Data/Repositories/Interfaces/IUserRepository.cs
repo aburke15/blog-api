@@ -8,5 +8,6 @@ namespace Blog.Data.Repositories.Interfaces
     public interface IUserRepository : IRepository<IdentityUser>
     {
         Task<IdentityUser> GetOneAsync(string id, CancellationToken cancellationToken = default);
+        BlogDbContext BlogDbContext { get; }
     }
 }

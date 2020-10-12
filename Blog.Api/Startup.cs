@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using Blog.Data;
 using Blog.Data.Models;
 using Blog.Data.Repositories.Implementations;
@@ -91,6 +92,7 @@ namespace Blog.Api
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddMediatR(typeof(Startup));
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

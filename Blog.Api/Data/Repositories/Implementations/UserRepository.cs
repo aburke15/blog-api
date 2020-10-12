@@ -12,12 +12,9 @@ namespace Blog.Data.Repositories.Implementations
             : base(context)
         { }
 
+        public BlogDbContext BlogDbContext => _context as BlogDbContext;
+
         public async Task<IdentityUser> GetOneAsync(string id, CancellationToken cancellationToken = default)
             => await BlogDbContext.Users.FindAsync(id, cancellationToken);
-
-        public BlogDbContext BlogDbContext
-        {
-            get { return _context as BlogDbContext; }
-        }
     }
 }
