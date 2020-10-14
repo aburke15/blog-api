@@ -46,7 +46,6 @@ namespace Blog.Api.Infrastructure.Queries.Handlers
             })
             .OrderBy(p => p.Id)
             .ToList();
-
         }
     }
 }

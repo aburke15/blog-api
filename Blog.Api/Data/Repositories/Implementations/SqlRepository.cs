@@ -25,7 +25,7 @@ namespace Blog.Data.Repositories.Implementations
         public virtual async Task<IEnumerable<T>> GetAllAsync(
             CancellationToken cancellationToken)
             => await _context.Set<T>()
-                .AsNoTracking<T>()
+                //.AsNoTracking()
                 .ToListAsync(cancellationToken);
 
         public async Task<T> GetOneAsync(int id, CancellationToken cancellationToken = default)

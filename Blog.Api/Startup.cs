@@ -38,8 +38,10 @@ namespace Blog.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BlogDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("Blog"))
-                );
+            {
+                options.UseLazyLoadingProxies();
+                options.UseNpgsql(Configuration.GetConnectionString("Blog"));
+            });
 
             services.AddHttpContextAccessor();
 
