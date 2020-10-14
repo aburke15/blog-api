@@ -13,14 +13,5 @@ namespace Blog.Data.Repositories.Implementations
         public PostRepository(BlogDbContext context)
             : base(context)
         { }
-
-        // public override async Task<IEnumerable<Post>> GetAllAsync(CancellationToken cancellationToken)
-        //     => await BlogDbContext.Posts
-        //         .Include(p => p.Author)
-        //         .AsNoTracking()
-        //         .ToListAsync(cancellationToken);
-
-        public BlogDbContext BlogDbContext
-            => _context as BlogDbContext;
     }
 }

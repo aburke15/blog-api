@@ -15,23 +15,24 @@ namespace Blog.Data.Repositories.Implementations
         public SqlRepository(DbContext context)
             => _context = context;
 
-        public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task CreateAsync(
+            T entity, CancellationToken cancellationToken = default)
             => await _context.Set<T>()
                 .AddAsync(entity, cancellationToken);
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
             => _context.Set<T>().Remove(entity);
 
         public virtual async Task<IEnumerable<T>> GetAllAsync(
             CancellationToken cancellationToken)
             => await _context.Set<T>()
-                //.AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-        public async Task<T> GetOneAsync(int id, CancellationToken cancellationToken = default)
+        public virtual async Task<T> GetOneAsync(
+            int id, CancellationToken cancellationToken = default)
             => await _context.Set<T>().FindAsync(id, cancellationToken);
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
             => _context.Set<T>().Update(entity);
     }
 }
