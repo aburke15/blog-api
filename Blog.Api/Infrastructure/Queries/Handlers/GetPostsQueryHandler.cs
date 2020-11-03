@@ -13,13 +13,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Api.Infrastructure.Queries.Handlers
 {
-    public class GetAllPostSummariesQueryHandler : IRequestHandler<GetAllPostSummariesQuery, IEnumerable<PostSummaryResponse>>
+    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, IEnumerable<PostSummaryResponse>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IRepositoryWrapper _repository;
 
-        public GetAllPostSummariesQueryHandler(
+        public GetPostsQueryHandler(
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
             IRepositoryWrapper repository)
@@ -30,7 +30,7 @@ namespace Blog.Api.Infrastructure.Queries.Handlers
         }
 
         public async Task<IEnumerable<PostSummaryResponse>> Handle(
-            GetAllPostSummariesQuery request,
+            GetPostsQuery request,
             CancellationToken cancellationToken)
         {
             var username = _httpContextAccessor.HttpContext.User?.Identity?.Name;
@@ -52,7 +52,7 @@ namespace Blog.Api.Infrastructure.Queries.Handlers
                     Username = p.Author.UserName
                 }
             })
-            .OrderBy(p => p.Id)
+            .OrderBy(p => p.CreatedAt)
             .ToList();
         }
     }

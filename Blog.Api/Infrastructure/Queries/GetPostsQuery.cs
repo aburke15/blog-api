@@ -7,6 +7,6 @@ using MediatR;
 
 namespace Blog.Api.Infrastructure.Queries
 {
-    public class GetAllPostSummariesQuery : IRequest<IEnumerable<PostSummaryResponse>>
+    public class GetPostsQuery : IRequest<IEnumerable<PostSummaryResponse>>
     { }
 }

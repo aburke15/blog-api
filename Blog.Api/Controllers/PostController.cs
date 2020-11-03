@@ -48,8 +48,12 @@ namespace Blog.Api.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<IActionResult> GetPostsAsync(CancellationToken cancellationToken)
         {
-            var query = new GetAllPostSummariesQuery();
+            var query = new GetPostsQuery();
             var result = await _mediator.Send(query, cancellationToken);
+
+            if (result == null || result.Count() <= 0)
+                return NotFound("Please try again later.");
+
             return Ok(result);
 
             // var posts = await _context.Posts.Select(p =>
@@ -71,9 +75,11 @@ namespace Blog.Api.Controllers
             // return Ok(posts);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> GetPostByIdAsync(int id, CancellationToken cancellationToken)
         {
+            var query = new GetPostByIdQuery();
+
             var post = await _context.Posts
                 .FindAsync(id, cancellationToken);
 
