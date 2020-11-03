@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data.Repositories.Implementations
 {
-    public class SqlRepository<T> : IRepository<T> where T : class
+    public class SqlRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly DbContext _context;
 
@@ -16,23 +16,23 @@ namespace Blog.Data.Repositories.Implementations
             => _context = context;
 
         public virtual async Task CreateAsync(
-            T entity, CancellationToken cancellationToken = default)
-            => await _context.Set<T>()
-                .AddAsync(entity, cancellationToken);
+            TEntity entity, CancellationToken cancellationToken = default)
+                => await _context.Set<TEntity>()
+                    .AddAsync(entity, cancellationToken);
 
-        public virtual void Delete(T entity)
-            => _context.Set<T>().Remove(entity);
+        public virtual void Delete(TEntity entity)
+            => _context.Set<TEntity>().Remove(entity);
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync(
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
             CancellationToken cancellationToken)
-            => await _context.Set<T>()
-                .ToListAsync(cancellationToken);
+                => await _context.Set<TEntity>()
+                    .ToListAsync(cancellationToken);
 
-        public virtual async Task<T> GetOneAsync(
+        public virtual async Task<TEntity> GetOneAsync(
             int id, CancellationToken cancellationToken = default)
-            => await _context.Set<T>().FindAsync(id, cancellationToken);
+                => await _context.Set<TEntity>().FindAsync(id, cancellationToken);
 
-        public virtual void Update(T entity)
-            => _context.Set<T>().Update(entity);
+        public virtual void Update(TEntity entity)
+            => _context.Set<TEntity>().Update(entity);
     }
 }

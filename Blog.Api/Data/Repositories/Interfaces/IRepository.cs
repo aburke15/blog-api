@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Blog.Data.Repositories.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<TEntity> where TEntity : class
     {
-        Task<T> GetOneAsync(int id, CancellationToken cancellationToken = default);
-        Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task CreateAsync(T entity, CancellationToken cancellationToken = default);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<TEntity> GetOneAsync(int id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
+        void Update(TEntity entity);
+        void Delete(TEntity entity);
     }
 }
