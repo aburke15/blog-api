@@ -52,53 +52,19 @@ namespace Blog.Api.Controllers
             var result = await _mediator.Send(query, cancellationToken);
 
             if (result == null || result.Count() <= 0)
-                return NotFound("Please try again later.");
+                return NotFound();
 
             return Ok(result);
-
-            // var posts = await _context.Posts.Select(p =>
-            // new PostSummaryResponse
-            //     {
-            //         Id = p.Id,
-            //         CreatedAt = p.CreatedAt,
-            //         CreatedAtDisplay = p.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
-            //         Title = p.Title,
-            //         CanEdit = _userId == p.Author.Id,
-            //         Author = new UserSummaryResponse
-            //         {
-            //             Username = p.Author.UserName
-            //         }
-            //     })
-            //     .OrderBy(p => p.Id)
-            //     .ToListAsync(cancellationToken);
-
-            // return Ok(posts);
         }
 
         [HttpGet("{id}"), AllowAnonymous]
         public async Task<IActionResult> GetPostByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var query = new GetPostByIdQuery();
+            var query = new GetPostByIdQuery(postId: id);
+            var result = await _mediator.Send(query, cancellationToken);
 
-            var post = await _context.Posts
-                .FindAsync(id, cancellationToken);
-
-            if (post == null)
-                return new NotFoundResult();
-
-            var result = new PostDetailResponse
-            {
-                Id = post.Id,
-                CreatedAt = post.CreatedAt,
-                CreatedAtDisplay = post.CreatedAt.ToString("hh:mm tt dddd yyyy-MM-dd"),
-                Title = post.Title,
-                Body = post.Body,
-                CanEdit = post.AuthorId == _userId,
-                Author = new UserSummaryResponse
-                {
-                    Username = post.Author.UserName
-                }
-            };
+            if (result == null)
+                return NotFound();
 
             return Ok(result);
         }
